@@ -24,7 +24,7 @@ fi
 INSTALL_DIR="/home/boot/"
 PROFIL_PATH="/etc/profile"
 MOTD_PATH="/etc/motd"
-HOSTNAME_FILE="/etc/hostname"
+HOSTNAME_FILE=/etc/hostname
 INTERFACE_FILE="/etc/dhcpcd.conf"
 SSH_FILE="/etc/ssh/sshd_config"
 SOFTWARE="PI Setup"

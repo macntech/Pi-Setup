@@ -14,6 +14,13 @@ cd ./Pi-Setup-master
 sudo bash Installer.sh
 
 ```
+Alternative you can also just git clone this repo (but you must install git first on a fresh Pi with apt-get install git)
+```
+git clone https://github.com/jgeisslinger/Pi-Setup.git
+cd ./Pi-Setup
+sudo bash Installer.sh
+
+```
 
 ## Features :bulb:
 With this script the following steps are done via whiptail:

@@ -13,12 +13,12 @@ sudo Installer.sh
 
 ```
 
-## Content :bulb:
-In this script the following happen:
+## Features :bulb:
+In this script the following can be done:
 
-* Clean all non needed start scripts
+* Clean all non needed start scripts from standard installer
 * Set a hostname
-* Set a static address
+* Set a static network address (optional)
+* Enable root ssh access (optional)
 * Setup new login screen as shown below
-* Enable root ssh access
 

@@ -60,11 +60,11 @@ function WriteIP {
     sleep 0.5
     echo -e "XXX\n0\nUpdating Network Config... \nXXX"
     #Write Network Settings in File
-    #echo "interface eth0" >> $INTERFACE_FILE
+    echo "interface eth0" >> $INTERFACE_FILE
     echo -e "XXX\n30\nUpdating Network Config... \nXXX"
-    #echo "  static ip_Address=$IP" >> $INTERFACE_FILE
+    echo "  static ip_Address=$IP" >> $INTERFACE_FILE
     echo -e "XXX\n60\nUpdating Network Config... \nXXX"
-    #echo "  static routers=$GATEWAY" >> $INTERFACE_FILE 
+    echo "  static routers=$GATEWAY" >> $INTERFACE_FILE 
     echo -e "XXX\n100\nUpdating Network Config...Done \nXXX"
     sleep 0.5
     } | whiptail --gauge "Please wait..." 6 60 0

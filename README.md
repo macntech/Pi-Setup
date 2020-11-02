@@ -11,7 +11,7 @@ To use this script just download the script from **Github** and run as initial u
 wget https://github.com/jgeisslinger/Pi-Setup/archive/master.zip
 unzip master.zip
 cd ./Pi-Setup-master
-sudo Installer.sh
+sudo bash Installer.sh
 
 ```
 

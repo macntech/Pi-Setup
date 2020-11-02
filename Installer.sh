@@ -26,7 +26,7 @@ PROFIL_PATH="/etc/profile"
 MOTD_PATH="/etc/motd"
 HOSTNAME_FILE="/etc/hostname"
 INTERFACE_FILE="/etc/dhcpcd.conf"
-SSH_FILE=""
+SSH_FILE="/etc/ssh/sshd_config"
 SOFTWARE="PI Setup"
 #### END VARIABLES #####
 
@@ -35,10 +35,10 @@ function SetupHostname {
     {
     sleep 0.5
     echo -e "XXX\n50\nUpdating Hostname... \nXXX"
-    #echo "$HOSTNAME" > $hostname_file
-    sleep 1
+    echo "$HOSTNAME" > $hostname_file
+    sleep 0.5
     echo -e "XXX\n100\nUpdating Hostname...Done \nXXX"
-    sleep 1
+    sleep 0.5
 	} | whiptail --gauge "Please wait..." 6 60 0
 }
 
@@ -48,7 +48,7 @@ function SetStaticIP {
     while [[ -z $net_result ]] || [[ $net_result == "1" ]] ; do
     IP=$(whiptail --inputbox --nocancel "IP Adress for your system" 8 78 $act_IP --title "Network Settings" 3>&1 1>&2 2>&3)
     GATEWAY=$(whiptail --inputbox --nocancel "Please enter the Gateway of your network" 8 78 Name --title "Network Setting" 3>&1 1>&2 2>&3)
-    whiptail --title "Are the settings correct?" --yesno "\n IP Adress: $IP \n Gateway: $GATEWAY \n" 18 78 3>&1 1>&2 2>&3
+    whiptail --title "Are the settings correct?" --yesno "\n IP Adress: $IP \n Gateway: $GATEWAY \n" 12 78 3>&1 1>&2 2>&3
     net_result=$?
     done
     
@@ -83,7 +83,7 @@ function SetRootPW
         password_result=$?
         done
         echo -e "XXX\n30\nEnable Root User... \nXXX"
-            #cat "PermitRootLogin yes" >> $ISCONFIGURED_FILE
+            cat "PermitRootLogin yes" >> $SSH_FILE
             sleep 0.5
         echo -e "XXX\n60\nUpdating Root Password... \nXXX"
             #echo -e "$rootpasswd1\n$rootpasswd2" | passwd root
@@ -108,7 +108,7 @@ function SetupI2C {
     sleep 0.5
     #mkdir -m $INSTALL_DIR
     echo -e "XXX\n10\nSetup PIP I2C... \nXXX"
-    #apt-get install python3-pip -y
+    apt-get install python3-pip -y
     echo -e "XXX\n20\nSetup I2C Tools... \nXXX"
     #apt-get install i2c-tools -y
     echo -e "XXX\n30\nSetup RPI.GPIO... \nXXX"

@@ -13,7 +13,7 @@
 #
 # cd /Volumes/Privat/12_Netzwerk/04_Raspberry/Installer/
 
-#Check install of whiptail
+# Check install of whiptail before entering the tool
 clear
 if ! which whiptail &>/dev/null; then
 	echo "This Installer depends on whiptail. Please install whiptail first."
@@ -31,18 +31,20 @@ SOFTWARE="PI Setup"
 #### END VARIABLES #####
 
 # Function to setup the Hostname of the Raspberry
+# Function Status: Done
 function SetupHostname {
     {
     sleep 0.5
     echo -e "XXX\n50\nUpdating Hostname... \nXXX"
-    echo "$HOSTNAME" > $hostname_file
+    echo "$HOSTNAME" > "$HOSTNAME_FILE"
     sleep 0.5
     echo -e "XXX\n100\nUpdating Hostname...Done \nXXX"
     sleep 0.5
 	} | whiptail --gauge "Please wait..." 6 60 0
 }
 
-#Function to setup the static IP in dhcpcd
+# Function to setup the static IP in dhcpcd
+# Function Status: Done
 function SetStaticIP {
     act_IP=$(hostname -I)
     while [[ -z $net_result ]] || [[ $net_result == "1" ]] ; do
@@ -55,6 +57,8 @@ function SetStaticIP {
     WriteIP
 }
 
+# Function to Write the IP into the File
+# Function Status: Done
 function WriteIP {
     {
     sleep 0.5
@@ -70,6 +74,8 @@ function WriteIP {
     } | whiptail --gauge "Please wait..." 6 60 0
 }
 
+# Function to enable the root user SSH and set password
+# Function Status: Under development
 function SetRootPW 
     {
     {
@@ -83,10 +89,10 @@ function SetRootPW
         password_result=$?
         done
         echo -e "XXX\n30\nEnable Root User... \nXXX"
-            cat "PermitRootLogin yes" >> $SSH_FILE
+            echo "PermitRootLogin yes" > "$SSH_FILE"
             sleep 0.5
         echo -e "XXX\n60\nUpdating Root Password... \nXXX"
-            #echo -e "$rootpasswd1\n$rootpasswd2" | passwd root
+            echo -e "$rootpasswd1\n$rootpasswd2" | passwd root
             sleep 0.5
         echo -e "XXX\n100\nEnable Root Complete... \nXXX"
             sleep 0.5
@@ -94,40 +100,45 @@ function SetRootPW
     } | whiptail --gauge "Please wait..." 6 60 0
 }
 
+# Function to setup the new SSH Login Screen
+# Function Status: Testing
 function SetupLoginScreen {
     {
+    echo -e "XXX\n10\nChecking install dir... \nXXX"
     #mkdir -m $INSTALL_DIR
-    echo -e "XXX\n10\nCheck install dir... \nXXX"
-
     } | whiptail --gauge "Please wait..." 6 60 0
 }
 
-# Function to setup the Hostname of the Raspberry
+# Function to setup the I2C OLED Config of the Raspberry
+# Function Status: Testing
 function SetupI2C {
     {
     sleep 0.5
-    #mkdir -m $INSTALL_DIR
+    echo -e "XXX\n5\nRefresh Update Library... \nXXX"
+    apt-get update
+    mkdir -m $INSTALL_DIR
     echo -e "XXX\n10\nSetup PIP I2C... \nXXX"
     apt-get install python3-pip -y
     echo -e "XXX\n20\nSetup I2C Tools... \nXXX"
-    #apt-get install i2c-tools -y
+    apt-get install i2c-tools -y
     echo -e "XXX\n30\nSetup RPI.GPIO... \nXXX"
-    #pip3 install RPI.GPIO
+    pip3 install RPI.GPIO
     echo -e "XXX\n40\nSetup ADAFruit Blinka... \nXXX"
-    #pip3 install adafruit-blinka
+    pip3 install adafruit-blinka
     echo -e "XXX\n50\nSetup ADAFruit SSD1306... \nXXX"
-    #pip3 install adafruit-circuitpython-ssd1306
+    pip3 install adafruit-circuitpython-ssd1306
     echo -e "XXX\n60\nSetup Python Pil... \nXXX"
-    #apt-get install python3-pil -y
+    apt-get install python3-pil -y
     echo -e "XXX\n70\nCopy Files... \nXXX"
-    #cp -u stats.py $INSTALL_DIR
+    cp -u stats.py $INSTALL_DIR
     echo -e "XXX\n100\nDone \nXXX"
     sleep 1
 	} | whiptail --gauge "Please wait..." 6 60 0
 }
 
 
-#Start Setup Tool
+##############  Start the main Setup Tool ################
+
 whiptail --title "PI Setup" --msgbox "This is a simple support tool to help setup Raspberry Pi.\n Details can be found in the GitHub Repo" 10 78 
 
 while [ 1 ]
@@ -143,7 +154,7 @@ whiptail --title "Pi Setup - Simplify Setup your Raspberry" --menu "Make your ch
 case $CHOICE in
 	"1)") 
         #Setup Hostname first
-        HOSTNAME=$(whiptail --inputbox --nocancel "Please enter the Hostname for your system" 8 78 Name --title "Hostname" 3>&1 1>&2 2>&3)  
+        HOSTNAME=$(whiptail --inputbox --nocancel "Please enter the Hostname for your system" 8 78 Hostname --title "Hostname" 3>&1 1>&2 2>&3)  
         SetupHostname
 
         #Give Option to Set Fixed IP
@@ -168,9 +179,9 @@ case $CHOICE in
         SetupLoginScreen
 	;;
 	"2)")   
-	    whiptail --title "Setup Screen Output" --msgbox "The system will now setup I2C Screen Output. Please confirm." 8 78
+	    whiptail --title "Setup Screen Output" --msgbox "The system will now setup I2C OLED Screen Output. If you already have the depending software installed, nothing will be installed and only the Screen script is copied. Please confirm." 8 78
         SetupI2C
-        whiptail --title "Setup Screen Output" --msgbox "All files are setup. You can now attach the OLED Display and reboot your system." 8 78
+        whiptail --title "Setup Screen Output" --msgbox "All files are setup and dependencies are installed. You can now attach the OLED Display and reboot your system." 8 78
 	;;
 
 	"3)") 

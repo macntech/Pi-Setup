@@ -25,23 +25,26 @@ if ! which whiptail &>/dev/null; then
 fi
 
 #### VARIABLES ####
-INSTALL_DIR="/home/boot/"
+INSTALL_DIR="/home/boot"
 PROFIL_PATH="/etc/profile"
 MOTD_PATH="/etc/motd"
 HOSTNAME_FILE=/etc/hostname
 INTERFACE_FILE="/etc/dhcpcd.conf"
 SSH_FILE="/etc/ssh/sshd_config"
 SOFTWARE="PI Setup"
+CURRENT_HOSTNAME=`cat /etc/hostname | tr -d " \t\n\r"`
+PI_CONFIG=/boot/config.txt
 #### END VARIABLES #####
 
 # Function to setup the Hostname of the Raspberry
 # Function Status: Done
 function SetupHostname {
     {
-    sleep 0.5
+    sleep 0.25
     echo -e "XXX\n50\nUpdating Hostname... \nXXX"
     echo "$HOSTNAME" > "$HOSTNAME_FILE"
-    sleep 0.5
+    sed -i "s/127.0.1.1.*$CURRENT_HOSTNAME/127.0.1.1\t$HOSTNAME/g" /etc/hosts
+    sleep 0.25
     echo -e "XXX\n100\nUpdating Hostname...Done \nXXX"
     sleep 0.5
 	} | whiptail --gauge "Please wait..." 6 60 0
@@ -58,7 +61,7 @@ function SetStaticNetwork {
     if (whiptail --title "Network Settings" --yesno "Do you want to set a domain for your Raspberry?" 8 78); then
         DOMAIN=$(whiptail --inputbox --nocancel "Please enter the Domain (FQDN) of your Raspberry (e.g. rasperry.local)" 10 78 Name --title "Network Setting" 3>&1 1>&2 2>&3)
     else
-        echo "::: LOG ::: Setup Domain denied"
+        echo "::: LOG ::: Setup Domain cancelled"
     fi
 
     whiptail --title "Are the settings correct?" --yesno "\n IP Adress: $IP \n Gateway: $GATEWAY \n Domain: $DOMAIN \n" 12 78 3>&1 1>&2 2>&3
@@ -89,7 +92,7 @@ function WriteNetwork {
 }
 
 # Function to enable the root user SSH and set password
-# Function Status: Under development
+# Function Status: Done
 function SetRootPW 
     {
     {
@@ -118,7 +121,7 @@ function SetRootPW
 }
 
 # Function to setup the new SSH Login Screen
-# Function Status: Testing
+# Function Status: Done
 function SetupLoginScreen {
     {
     echo -e "XXX\n10\nChecking install dir... \nXXX"
@@ -142,7 +145,7 @@ function SetupLoginScreen {
 }
 
 # Function to setup the I2C OLED Config of the Raspberry
-# Function Status: Testing
+# Function Status: Done
 function SetupI2C {
     {
     sleep 0.5
@@ -162,10 +165,26 @@ function SetupI2C {
     echo -e "XXX\n60\nSetup Python Pil... \nXXX"
     apt-get install python3-pil -y
     echo -e "XXX\n70\nCopy Files... \nXXX"
-    cp -u stats.py $INSTALL_DIR
+    cp -u stats.py "$INSTALL_DIR"
     echo -e "XXX\n100\nDone \nXXX"
+    echo "::: LOG ::: I2C OLED Setup completed."
     sleep 1
 	} | whiptail --gauge "Please wait..." 6 60 0
+}
+
+#Enable I2C Module from raspi-config
+function EnableI2C{
+    sed /etc/modules -i -e "s/^#[[:space:]]*\(i2c[-_]dev\)/\1/"
+    dtparam i2c_arm=on
+    modprobe i2c-dev
+    local key="dtparam=i2c_arm"
+    local value="on"
+    local fn=$CONFIG
+    local file=assert(io.open(fn))
+    for line in file:lines() do
+        if line:match("^#?%s*"..key.."=.*$") then
+        line=key.."="..value
+    end
 }
 
 
@@ -191,8 +210,8 @@ case $CHOICE in
 
         #Give Option to Set Fixed IP
         if (whiptail --title "Network Settings" --yesno "Do you need a fixed IP Adress on the Raspberry" 8 78); then
-            echo "::: LOG ::: Setup Fix IP confirmed"
             SetStaticNetwork
+            echo "::: LOG ::: Setup Fix Network completed"
         else
             echo "::: LOG ::: Setup Fix IP cancelled"
         fi
@@ -213,6 +232,7 @@ case $CHOICE in
 	"2)")   
 	    whiptail --title "Setup Screen Output" --msgbox "The system will now setup I2C OLED Screen Output. If you already have the depending software installed, nothing will be installed and only the Screen script is copied. Please confirm." 8 78
         SetupI2C
+        EnableI2C
         whiptail --title "Setup Screen Output" --msgbox "All files are setup and dependencies are installed. You can now attach the OLED Display and reboot your system." 8 78
 	;;
 

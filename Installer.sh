@@ -122,7 +122,7 @@ function SetRootPW
 function SetupLoginScreen {
     {
     echo -e "XXX\n10\nChecking install dir... \nXXX"
-    mkdir -m "$INSTALL_DIR"
+    mkdir -p "$INSTALL_DIR"
     sleep 0.5
     echo -e "XXX\n20\nCopy Files... \nXXX"
     cp -b motd.sh "$INSTALL_DIR"
@@ -148,7 +148,7 @@ function SetupI2C {
     sleep 0.5
     echo -e "XXX\n5\nRefresh Update Library... \nXXX"
     apt-get update
-    mkdir -m $INSTALL_DIR
+    mkdir -p "$INSTALL_DIR"
     echo -e "XXX\n10\nSetup PIP I2C... \nXXX"
     apt-get install python3-pip -y
     echo -e "XXX\n20\nSetup I2C Tools... \nXXX"

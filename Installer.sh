@@ -33,7 +33,7 @@ HOSTNAME_FILE=/etc/hostname
 INTERFACE_FILE="/etc/dhcpcd.conf"
 SSH_FILE="/etc/ssh/sshd_config"
 SOFTWARE="PI Setup"
-LOGFILE=$(touch logfile_${TODAY}.txt)
+LOGFILE=$(touch logfile_${TODAY})
 #### END VARIABLES #####
 
 # Function to setup the Hostname of the Raspberry
@@ -58,7 +58,7 @@ function SetStaticNetwork {
     GATEWAY=$(whiptail --inputbox --nocancel "Please enter the Gateway of your network" 8 78 Name --title "Network Setting" 3>&1 1>&2 2>&3)
     
     if (whiptail --title "Network Settings" --yesno "Do you want to set a domain for your Raspberry?" 8 78); then
-        DOMAIN=$(whiptail --inputbox --nocancel "Please enter the Domain (FQDN) of your Raspberry (e.g. rasperry.local)" 8 78 Name --title "Network Setting" 3>&1 1>&2 2>&3)
+        DOMAIN=$(whiptail --inputbox --nocancel "Please enter the Domain (FQDN) of your Raspberry (e.g. rasperry.local)" 10 78 Name --title "Network Setting" 3>&1 1>&2 2>&3)
     else
         echo "::: LOG ::: Setup Domain denied"
     fi
@@ -105,7 +105,7 @@ function SetRootPW
         password_result=$?
         done
         echo -e "XXX\n30\nEnable Root User... \nXXX"
-            echo "PermitRootLogin yes" > "$SSH_FILE"
+            echo "PermitRootLogin yes" >> "$SSH_FILE"
             sleep 0.5
         echo -e "XXX\n60\nUpdating Root Password... \nXXX"
             echo -e "$rootpasswd1\n$rootpasswd2" | passwd root
@@ -128,14 +128,14 @@ function SetupLoginScreen {
     sleep 0.5
     echo -e "XXX\n20\nCopy Files... \nXXX"
     cp -b motd.sh $INSTALL_DIR
-    chmod 777 $INSTALL_DIR/motd.sh
+    chmod 777 "$INSTALL_DIR/motd.sh"
     sleep 0.5
     echo -e "XXX\n40\nWriting new Entries... \nXXX"
-    echo "${INSTALL_DIR}/motd.sh" >> $MOTD_PATH
+    echo "$INSTALL_DIR/motd.sh" >> "$MOTD_PATH"
     sleep 0.5
     echo -e "XXX\n60\nRemove old Files... \nXXX"
-    rm /etc/profile.d/wifi-check.sh
-    rm /etc/update-motd.d/10-uname
+    rm -f /etc/profile.d/wifi-check.sh
+    rm -f /etc/update-motd.d/10-uname
     > /etc/motd 
     sleep 0.25
     echo -e "XXX\n100\nLogin Screen completed... \nXXX"
@@ -173,7 +173,7 @@ function SetupI2C {
 
 ##############  Start the main Setup Tool ################
 
-whiptail --title "PI Setup" --msgbox "This is a simple support tool to help setup Raspberry Pi.\n Details can be found in the GitHub Repo" 10 78 
+whiptail --title "PI Setup" --msgbox "This is a simple support tool to help setup Raspberry Pi.\n\nDetails can be found in the GitHub Repo.\n\nVisit me at https://coding.observer" 10 78 
 
 while [ 1 ]
 do
@@ -201,7 +201,7 @@ case $CHOICE in
 
         #Set Root user
         if (whiptail --title "Root User Setup" --yesno "Do you want to setup and enable SSH root user?" 8 78); then
-            echo "::: LOG ::: Setup SSH Root User confirmed" >> $LOGFILE
+            echo "::: LOG ::: Setup SSH Root User confirmed" >> "$LOGFILE"
             SetRootPW
         else
             echo "::: LOG ::: Setup SSH Root User cancelled" >> $LOGFILE
@@ -220,11 +220,9 @@ case $CHOICE in
 
 	"3)") 
         if (whiptail --title "Reboot" --yesno "After you finish the setup you should reboot your PI to enable all settings made (Please remember your fix IP if set during setup). You can find the Logfile under ${PWD} \n\nDo you want to reboot now?" 12 78); then
-            clear
             echo "::: LOG ::: Reboot confirmed." >> $LOGFILE
             #reboot
         else
-            clear
             echo "::: Setup completed. Reboot cancelled. Please reboot manually." >> $LOGFILE
             exit
         fi

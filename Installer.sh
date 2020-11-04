@@ -33,7 +33,7 @@ HOSTNAME_FILE=/etc/hostname
 INTERFACE_FILE="/etc/dhcpcd.conf"
 SSH_FILE="/etc/ssh/sshd_config"
 SOFTWARE="PI Setup"
-LOGFILE=$(touch logfile_${TODAY})
+LOGFILE="$(touch logfile_${TODAY})"
 #### END VARIABLES #####
 
 # Function to setup the Hostname of the Raspberry

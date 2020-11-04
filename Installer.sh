@@ -131,7 +131,7 @@ function SetupLoginScreen {
     chmod 777 "$INSTALL_DIR/motd.sh"
     sleep 0.5
     echo -e "XXX\n40\nWriting new Entries... \nXXX"
-    echo "$INSTALL_DIR/motd.sh" >> "$MOTD_PATH"
+    echo "$INSTALL_DIR/motd.sh" >> "$PROFIL_PATH"
     sleep 0.5
     echo -e "XXX\n60\nRemove old Files... \nXXX"
     rm -f /etc/profile.d/wifi-check.sh
@@ -173,7 +173,7 @@ function SetupI2C {
 
 ##############  Start the main Setup Tool ################
 
-whiptail --title "PI Setup" --msgbox "This is a simple support tool to help setup Raspberry Pi.\n\nDetails can be found in the GitHub Repo.\n\nVisit me at https://coding.observer" 10 78 
+whiptail --title "PI Setup" --msgbox "This is a simple support tool to help setup Raspberry Pi.\n\nDetails can be found in the GitHub Repo.\n\nVisit me at https://coding.observer" 15 78 
 
 while [ 1 ]
 do

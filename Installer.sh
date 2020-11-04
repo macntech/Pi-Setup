@@ -25,7 +25,6 @@ if ! which whiptail &>/dev/null; then
 fi
 
 #### VARIABLES ####
-TODAY=$(date +"%m_%d_%Y_%R")
 INSTALL_DIR="/home/boot/"
 PROFIL_PATH="/etc/profile"
 MOTD_PATH="/etc/motd"
@@ -33,7 +32,6 @@ HOSTNAME_FILE=/etc/hostname
 INTERFACE_FILE="/etc/dhcpcd.conf"
 SSH_FILE="/etc/ssh/sshd_config"
 SOFTWARE="PI Setup"
-LOGFILE="$(touch logfile_${TODAY})"
 #### END VARIABLES #####
 
 # Function to setup the Hostname of the Raspberry
@@ -124,10 +122,10 @@ function SetRootPW
 function SetupLoginScreen {
     {
     echo -e "XXX\n10\nChecking install dir... \nXXX"
-    mkdir -m $INSTALL_DIR
+    mkdir -m "$INSTALL_DIR"
     sleep 0.5
     echo -e "XXX\n20\nCopy Files... \nXXX"
-    cp -b motd.sh $INSTALL_DIR
+    cp -b motd.sh "$INSTALL_DIR"
     chmod 777 "$INSTALL_DIR/motd.sh"
     sleep 0.5
     echo -e "XXX\n40\nWriting new Entries... \nXXX"
@@ -193,7 +191,7 @@ case $CHOICE in
 
         #Give Option to Set Fixed IP
         if (whiptail --title "Network Settings" --yesno "Do you need a fixed IP Adress on the Raspberry" 8 78); then
-            echo "::: LOG ::: Setup Fix IP confirmed" >> $LOGFILE
+            echo "::: LOG ::: Setup Fix IP confirmed"
             SetStaticNetwork
         else
             echo "::: LOG ::: Setup Fix IP cancelled"
@@ -201,10 +199,10 @@ case $CHOICE in
 
         #Set Root user
         if (whiptail --title "Root User Setup" --yesno "Do you want to setup and enable SSH root user?" 8 78); then
-            echo "::: LOG ::: Setup SSH Root User confirmed" >> "$LOGFILE"
+            echo "::: LOG ::: Setup SSH Root User confirmed."
             SetRootPW
         else
-            echo "::: LOG ::: Setup SSH Root User cancelled" >> $LOGFILE
+            echo "::: LOG ::: Setup SSH Root User denied."
         fi
 
         #Do main manipulation
@@ -220,10 +218,10 @@ case $CHOICE in
 
 	"3)") 
         if (whiptail --title "Reboot" --yesno "After you finish the setup you should reboot your PI to enable all settings made (Please remember your fix IP if set during setup). You can find the Logfile under ${PWD} \n\nDo you want to reboot now?" 12 78); then
-            echo "::: LOG ::: Reboot confirmed." >> $LOGFILE
-            #reboot
+            echo "::: LOG ::: Setup completed. Reboot confirmed. Shutdown in 1 Minute. To cancel type shutdown -c"
+            shutdown -r 1
         else
-            echo "::: Setup completed. Reboot cancelled. Please reboot manually." >> $LOGFILE
+            echo "::: LOG ::: Setup completed. Reboot cancelled. Please reboot manually."
             exit
         fi
     ;;

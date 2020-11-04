@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/bash
+
 #  _____ _____    _____      _               
 # |  __ \_   _|  / ____|    | |              
 # | |__) || |   | (___   ___| |_ _   _ _ __  
@@ -9,9 +10,12 @@
 #                                    |_|    
 #
 # This Script is Free to Use and will support you on setting up a Raspberry. 
-# It is developed on personal purpose.
+# It is developed on personal purpose. More information can be found in the Github repo.
+# https://github.com/jgeisslinger/Pi-Setup
+# 
+# Author: Johannes Geisslinger
+# Web: https://coding.observer
 #
-# cd /Volumes/Privat/12_Netzwerk/04_Raspberry/Installer/
 
 # Check install of whiptail before entering the tool
 clear
@@ -21,6 +25,7 @@ if ! which whiptail &>/dev/null; then
 fi
 
 #### VARIABLES ####
+TODAY=$(date +"%m_%d_%Y_%R")
 INSTALL_DIR="/home/boot/"
 PROFIL_PATH="/etc/profile"
 MOTD_PATH="/etc/motd"
@@ -28,6 +33,7 @@ HOSTNAME_FILE=/etc/hostname
 INTERFACE_FILE="/etc/dhcpcd.conf"
 SSH_FILE="/etc/ssh/sshd_config"
 SOFTWARE="PI Setup"
+LOGFILE=$(touch logfile_${TODAY}.txt)
 #### END VARIABLES #####
 
 # Function to setup the Hostname of the Raspberry
@@ -43,32 +49,39 @@ function SetupHostname {
 	} | whiptail --gauge "Please wait..." 6 60 0
 }
 
-# Function to setup the static IP in dhcpcd
+# Function to request the static IP from the user entry
 # Function Status: Done
-function SetStaticIP {
+function SetStaticNetwork {
     act_IP=$(hostname -I)
     while [[ -z $net_result ]] || [[ $net_result == "1" ]] ; do
     IP=$(whiptail --inputbox --nocancel "IP Adress for your system" 8 78 $act_IP --title "Network Settings" 3>&1 1>&2 2>&3)
     GATEWAY=$(whiptail --inputbox --nocancel "Please enter the Gateway of your network" 8 78 Name --title "Network Setting" 3>&1 1>&2 2>&3)
+    
+    if (whiptail --title "Network Settings" --yesno "Do you want to set a domain for your Raspberry?" 8 78); then
+        DOMAIN=$(whiptail --inputbox --nocancel "Please enter the Domain (FQDN) of your Raspberry (e.g. rasperry.local)" 8 78 Name --title "Network Setting" 3>&1 1>&2 2>&3)
+    else
+        echo "::: LOG ::: Setup Domain denied"
+    fi
+
     whiptail --title "Are the settings correct?" --yesno "\n IP Adress: $IP \n Gateway: $GATEWAY \n" 12 78 3>&1 1>&2 2>&3
     net_result=$?
     done
-    
-    WriteIP
+    # Call the Function to write the network information
+    WriteNetwork
 }
 
-# Function to Write the IP into the File
+# Function to Write the IP into dhcpcd
 # Function Status: Done
-function WriteIP {
+function WriteNetwork {
     {
     sleep 0.5
     echo -e "XXX\n0\nUpdating Network Config... \nXXX"
     #Write Network Settings in File
     echo "interface eth0" >> $INTERFACE_FILE
     echo -e "XXX\n30\nUpdating Network Config... \nXXX"
-    echo "  static ip_Address=$IP" >> $INTERFACE_FILE
+    echo "static ip_Address=$IP" >> $INTERFACE_FILE
     echo -e "XXX\n60\nUpdating Network Config... \nXXX"
-    echo "  static routers=$GATEWAY" >> $INTERFACE_FILE 
+    echo "static routers=$GATEWAY" >> $INTERFACE_FILE 
     echo -e "XXX\n100\nUpdating Network Config...Done \nXXX"
     sleep 0.5
     } | whiptail --gauge "Please wait..." 6 60 0
@@ -94,6 +107,9 @@ function SetRootPW
         echo -e "XXX\n60\nUpdating Root Password... \nXXX"
             echo -e "$rootpasswd1\n$rootpasswd2" | passwd root
             sleep 0.5
+        echo -e "XXX\n80\nRestarting SSH Service... \nXXX"
+            sudo service ssh restart
+            sleep 0.5
         echo -e "XXX\n100\nEnable Root Complete... \nXXX"
             sleep 0.5
 
@@ -105,7 +121,22 @@ function SetRootPW
 function SetupLoginScreen {
     {
     echo -e "XXX\n10\nChecking install dir... \nXXX"
-    #mkdir -m $INSTALL_DIR
+    mkdir -m $INSTALL_DIR
+    sleep 0.5
+    echo -e "XXX\n20\nCopy Files... \nXXX"
+    cp -b motd.sh $INSTALL_DIR
+    chmod 777 $INSTALL_DIR/motd.sh
+    sleep 0.5
+    echo -e "XXX\n40\nWriting new Entries... \nXXX"
+    echo "${INSTALL_DIR}/motd.sh" >> $MOTD_PATH
+    sleep 0.5
+    echo -e "XXX\n60\nRemove old Files... \nXXX"
+    rm /etc/profile.d/wifi-check.sh
+    rm /etc/update-motd.d/10-uname
+    > /etc/motd 
+    sleep 0.25
+    echo -e "XXX\n100\nLogin Screen completed... \nXXX"
+    sleep 0.25
     } | whiptail --gauge "Please wait..." 6 60 0
 }
 
@@ -159,23 +190,23 @@ case $CHOICE in
 
         #Give Option to Set Fixed IP
         if (whiptail --title "Network Settings" --yesno "Do you need a fixed IP Adress on the Raspberry" 8 78); then
-            echo "::: Setup Fix IP confirmed"
-            SetStaticIP
+            echo "::: LOG ::: Setup Fix IP confirmed" >> $LOGFILE
+            SetStaticNetwork
         else
-            echo "::: Setup Fix IP cancelled"
+            echo "::: LOG ::: Setup Fix IP cancelled"
         fi
 
         #Set Root user
-        if (whiptail --title "Root User Setup" --yesno "Do you want to enable Root user?" 8 78); then
-            echo "::: Setup Root User confirmed"
+        if (whiptail --title "Root User Setup" --yesno "Do you want to setup and enable SSH root user?" 8 78); then
+            echo "::: LOG ::: Setup SSH Root User confirmed" >> $LOGFILE
             SetRootPW
         else
-            echo "::: Setup Root User cancelled"
+            echo "::: LOG ::: Setup SSH Root User cancelled" >> $LOGFILE
         fi
 
         #Do main manipulation
         #Inform user about start of script
-        whiptail --title "Initialization" --msgbox "The system will now setup the following parts: Please confirm." 8 78
+        whiptail --title "Initialization" --msgbox "The system will now start initialization of new SSH screen. Please confirm." 8 78
         SetupLoginScreen
 	;;
 	"2)")   
@@ -185,13 +216,13 @@ case $CHOICE in
 	;;
 
 	"3)") 
-        if (whiptail --title "Reboot" --yesno "After you finish the setup you should reboot your PI to enable all settings made (Please remember your fix IP if set during setup). \n\nDo you want to reboot now?" 12 78); then
+        if (whiptail --title "Reboot" --yesno "After you finish the setup you should reboot your PI to enable all settings made (Please remember your fix IP if set during setup). You can find the Logfile under ${PWD} \n\nDo you want to reboot now?" 12 78); then
             clear
-            echo "::: Reboot confirmed."
+            echo "::: LOG ::: Reboot confirmed." >> $LOGFILE
             #reboot
         else
             clear
-            echo "::: Setup completed. Reboot cancelled. Please reboot manually."
+            echo "::: Setup completed. Reboot cancelled. Please reboot manually." >> $LOGFILE
             exit
         fi
     ;;

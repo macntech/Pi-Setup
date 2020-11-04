@@ -27,7 +27,7 @@ With this script the following steps are done via whiptail:
 
 * Clean all non needed start scripts from standard Pi installer
 * Set a new **hostname**
-* Set a **static network address** (optional)
+* Set a **static network address**, **gateway** and **hostname**(optional)
 * Enable **root ssh** access (optional)
 * Setup new **ssh login screen** as shown below
 * Prepare **I2C Display** with standard information (see Example)

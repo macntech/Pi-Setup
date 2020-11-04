@@ -63,7 +63,7 @@ function SetStaticNetwork {
         echo "::: LOG ::: Setup Domain denied"
     fi
 
-    whiptail --title "Are the settings correct?" --yesno "\n IP Adress: $IP \n Gateway: $GATEWAY \n" 12 78 3>&1 1>&2 2>&3
+    whiptail --title "Are the settings correct?" --yesno "\n IP Adress: $IP \n Gateway: $GATEWAY \n Domain: $DOMAIN \n" 12 78 3>&1 1>&2 2>&3
     net_result=$?
     done
     # Call the Function to write the network information
@@ -78,10 +78,13 @@ function WriteNetwork {
     echo -e "XXX\n0\nUpdating Network Config... \nXXX"
     #Write Network Settings in File
     echo "interface eth0" >> $INTERFACE_FILE
-    echo -e "XXX\n30\nUpdating Network Config... \nXXX"
+    echo -e "XXX\n25\nUpdating IP Config... \nXXX"
     echo "static ip_Address=$IP" >> $INTERFACE_FILE
-    echo -e "XXX\n60\nUpdating Network Config... \nXXX"
+    echo -e "XXX\n50\nUpdating Gateway Config... \nXXX"
     echo "static routers=$GATEWAY" >> $INTERFACE_FILE 
+    echo -e "XXX\n75\nUpdating Domain Config... \nXXX"
+    echo "static domain_name=$DOMAIN" >> $INTERFACE_FILE 
+    echo "static domain_search=$DOMAIN" >> $INTERFACE_FILE 
     echo -e "XXX\n100\nUpdating Network Config...Done \nXXX"
     sleep 0.5
     } | whiptail --gauge "Please wait..." 6 60 0

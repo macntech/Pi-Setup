@@ -183,7 +183,7 @@ function EnableI2C{
     sed /etc/modules -i -e "s/^#[[:space:]]*\(i2c[-_]dev\)/\1/"
     dtparam i2c_arm=on
     modprobe i2c-dev
-    sudo sed -i 's/#dtparam=i2c_arm/dtparam=i2c_arm=on/' $PI_CONFIG
+    sudo sed 's/#dtparam=i2c_arm/dtparam=i2c_arm=on/' $PI_CONFIG
 }
 
 
@@ -231,8 +231,8 @@ case $CHOICE in
 	"2)")   
 	    whiptail --title "Setup Screen Output" --msgbox "The system will now setup I2C OLED Screen Output. If you already have the depending software installed, nothing will be installed and only the Screen script is copied. Please confirm." 8 78
         SetupI2C
-        EnableI2C
-        whiptail --title "Setup Screen Output" --msgbox "All files are setup and dependencies are installed. You can now attach the OLED Display and reboot your system." 8 78
+        #EnableI2C
+        whiptail --title "Setup Screen Output" --msgbox "All files are setup and dependencies are installed. Please enable I2C with raspi-config command." 8 78
 	;;
 
 	"3)") 

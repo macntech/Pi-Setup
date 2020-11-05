@@ -174,7 +174,7 @@ function SetupI2C {
 	} | whiptail --gauge "Please wait..." 6 60 0
 }
 
-function copyStats{
+function copyStats {
 sudo sed -i '/exit 0/i sudo python3 \/home\/boot\/stats.py \&' /etc/rc.local
 }
 

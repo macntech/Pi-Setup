@@ -29,17 +29,31 @@ With this script the following steps are done via whiptail:
 
 * Clean all non needed start scripts from standard Pi installer
 * Set a new **hostname**
-* Set a **static network address**, **gateway** and **hostname**(optional)
-* Enable **root ssh** access (optional)
-* Setup new **ssh login screen** as shown below
-* Prepare **I2C Display** with standard information (see Example)
+* Set a **static network address**, **gateway** and **domain** (optional)
+* Enable **root ssh** access and create new password (optional)
+* Setup new **SSH login screen** panel as shown below
+* Prepare **128x64 OLED Display** with standard information (see Example)
 
 ## Examples :mag:
 New boot screen once you login to your Raspberry:
 
+![New Boot Screen](https://s3.eu-central-1.wasabisys.com/gwce.public/newssh.png)
+
+Menu when entering the setup tool:
+
+![New Start Screen](https://s3.eu-central-1.wasabisys.com/gwce.public/startscreen.png)
+
+## Tasklist for future Features :spiral_notepad:
+I have some more tasks in mind that could be automated by the script in the future:
+- [ ] Setup new Pi password to supress SSH warning
+- [ ] Enable I2C and SPI interface directly (kind of difficult)
+- [ ] Clear install files after setup completed
+- [ ] Better Error handling 
+  
 
 ## Credits :thumbsup:
 The script is just a wrapper on various parts I found during my work on Raspberry Datacenter. Credits go to especially:
 
-* **Boot Screen** and **I2C Pyhton** are modified versions of scripts made by Sebastian from 
-* Some snippets from **raspi-config** tool are re-used
+* **SSH boot screen** is a modified version of a script made by Sebastian from @[indiBit](https://github.com/indiBit)
+* **I2C Pyhton** is a modified version of a script made by @[SliderBOR](https://github.com/SliderBOR)
+* Some snippets from **raspi-config** tool are re-used in this script

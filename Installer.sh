@@ -93,8 +93,7 @@ function WriteNetwork {
 
 # Function to enable the root user SSH and set password
 # Function Status: Done
-function SetRootPW 
-    {
+function SetRootPW {
     while [[ -z $password_result ]] || [[ $password_result == "1" ]] ; do
         rootpasswd1=$(whiptail --passwordbox "Enter new password for root:" 10 60 3>&1 1>&2 2>&3)
         rootpasswd2=$(whiptail --passwordbox "Repeat new password for root:" 10 60 3>&1 1>&2 2>&3)
@@ -107,7 +106,7 @@ function SetRootPW
         writeRoot
 }
 
-function writeRoot{
+function writeRoot {
     {
     echo -e "XXX\n30\nEnable Root User... \nXXX"      
     sudo sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' $SSH_FILE

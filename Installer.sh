@@ -184,14 +184,7 @@ function EnableI2C{
     dtparam i2c_arm=on
     modprobe i2c-dev
 
-    local key="dtparam=i2c_arm"
-    local value="on"
-    local fn=$CONFIG
-    local file=assert(io.open(fn))
-    for line in file:lines() do
-        if line:match("^#?%s*"..key.."=.*$") then
-        line=key.."="..value
-    end
+    sudo sed -i 's/#dtparam=i2c_arm/dtparam=i2c_arm=on/' $PI_CONFIG
 
     whiptail --msgbox "The ARM I2C interface is enabled" 20 60 1
 }

@@ -33,7 +33,6 @@ INTERFACE_FILE="/etc/dhcpcd.conf"
 SSH_FILE="/etc/ssh/sshd_config"
 SOFTWARE="PI Setup"
 CURRENT_HOSTNAME=`cat /etc/hostname | tr -d " \t\n\r"`
-BLACKLIST=/etc/modprobe.d/raspi-blacklist.conf
 #### END VARIABLES #####
 
 # Function to setup the Hostname of the Raspberry
@@ -176,7 +175,7 @@ function SetupI2C {
 
 
 ##############  Start the main Setup Tool ################
-
+echo "::: LOG ::: Setup Started"
 whiptail --title "PI Setup" --msgbox "This is a simple support tool to help setup Raspberry Pi.\n\nDetails can be found in the GitHub Repo.\n\nVisit me at https://coding.observer" 15 78 
 
 while [ 1 ]
@@ -191,14 +190,15 @@ whiptail --title "Pi Setup - Simplify Setup your Raspberry" --menu "Make your ch
 #Selection
 case $CHOICE in
 	"1)") 
+        echo "::: LOG ::: Initialization started"
         #Setup Hostname first
         HOSTNAME=$(whiptail --inputbox --nocancel "Please enter the Hostname for your system" 8 78 Hostname --title "Hostname" 3>&1 1>&2 2>&3)  
         SetupHostname
-
+        echo "::: LOG ::: Hostname changed to $HOSTNAME"
         #Give Option to Set Fixed IP
         if (whiptail --title "Network Settings" --yesno "Do you need a fixed IP Adress on the Raspberry" 8 78); then
             SetStaticNetwork
-            echo "::: LOG ::: Setup Fix Network completed"
+            echo "::: LOG ::: Setup Fixed Network at $IP / $GATEWAY / $DOMAIN"
         else
             echo "::: LOG ::: Setup Fix IP cancelled"
         fi

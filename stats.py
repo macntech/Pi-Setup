@@ -69,7 +69,6 @@ while True:
     draw.text((x, top + 0), "IP: " + IP, font=font, fill=255)
     draw.text((x, top + 8), CPU, font=font, fill=255)
     draw.text((x, top + 16), MemUsage, font=font, fill=255)
-    draw.text((x, top + 25), Disk, font=font, fill=255)
 
     # Display image.
     disp.image(image)

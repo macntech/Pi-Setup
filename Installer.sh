@@ -95,7 +95,6 @@ function WriteNetwork {
 # Function Status: Done
 function SetRootPW 
     {
-    {
     while [[ -z $password_result ]] || [[ $password_result == "1" ]] ; do
         rootpasswd1=$(whiptail --passwordbox "Enter new password for root:" 10 60 3>&1 1>&2 2>&3)
         rootpasswd2=$(whiptail --passwordbox "Repeat new password for root:" 10 60 3>&1 1>&2 2>&3)
@@ -105,18 +104,22 @@ function SetRootPW
         fi
         password_result=$?
         done
-        echo -e "XXX\n30\nEnable Root User... \nXXX"      
-        sudo sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' $SSH_FILE
-        sleep 0.5
-        echo -e "XXX\n60\nUpdating Root Password... \nXXX"
-            echo -e "$rootpasswd1\n$rootpasswd2" | passwd root
-            sleep 0.5
-        echo -e "XXX\n80\nRestarting SSH Service... \nXXX"
-            sudo service ssh restart
-            sleep 0.5
-        echo -e "XXX\n100\nEnable Root Complete... \nXXX"
-            sleep 0.5
+        writeRoot
+}
 
+function writeRoot{
+    {
+    echo -e "XXX\n30\nEnable Root User... \nXXX"      
+    sudo sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' $SSH_FILE
+    sleep 0.5
+    echo -e "XXX\n60\nUpdating Root Password... \nXXX"
+    echo -e "$rootpasswd1\n$rootpasswd2" | passwd root
+    sleep 0.5
+    echo -e "XXX\n80\nRestarting SSH Service... \nXXX"
+    sudo service ssh restart
+    sleep 0.5
+    echo -e "XXX\n100\nEnable Root Complete... \nXXX"
+    sleep 0.5
     } | whiptail --gauge "Please wait..." 6 60 0
 }
 

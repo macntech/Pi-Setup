@@ -107,14 +107,7 @@ function SetRootPW
         password_result=$?
         done
         echo -e "XXX\n30\nEnable Root User... \nXXX"      
-        local key="PermitRootLogin"
-        local value="yes"
-        local fn=$SSH_FILE
-        local file=assert(io.open(fn))
-        for line in file:lines() do
-            if line:match("^#?%s*"..key) then
-            line=key..value
-        end 
+        sudo sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' $SSH_FILE
         sleep 0.5
         echo -e "XXX\n60\nUpdating Root Password... \nXXX"
             echo -e "$rootpasswd1\n$rootpasswd2" | passwd root

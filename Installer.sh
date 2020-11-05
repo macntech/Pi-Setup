@@ -34,6 +34,7 @@ SSH_FILE="/etc/ssh/sshd_config"
 SOFTWARE="PI Setup"
 CURRENT_HOSTNAME=`cat /etc/hostname | tr -d " \t\n\r"`
 PI_CONFIG=/boot/config.txt
+BLACKLIST=/etc/modprobe.d/raspi-blacklist.conf
 #### END VARIABLES #####
 
 # Function to setup the Hostname of the Raspberry
@@ -106,7 +107,15 @@ function SetRootPW
         password_result=$?
         done
         echo -e "XXX\n30\nEnable Root User... \nXXX"
-            echo "PermitRootLogin yes" >> "$SSH_FILE"
+            
+            local key="PermitRootLogin"
+            local value="yes"
+            local fn=$SSH_FILE
+            local file=assert(io.open(fn))
+                for line in file:lines() do
+                    if line:match("^#?%s*"..key) then
+                    line=key..value
+                end 
             sleep 0.5
         echo -e "XXX\n60\nUpdating Root Password... \nXXX"
             echo -e "$rootpasswd1\n$rootpasswd2" | passwd root
@@ -174,9 +183,15 @@ function SetupI2C {
 
 #Enable I2C Module from raspi-config
 function EnableI2C{
+    
+    if ! [ -e $BLACKLIST ]; then
+        touch $BLACKLIST
+    fi
+    sed $BLACKLIST -i -e "s/^\(blacklist[[:space:]]*i2c[-_]bcm2708\)/#\1/"
     sed /etc/modules -i -e "s/^#[[:space:]]*\(i2c[-_]dev\)/\1/"
     dtparam i2c_arm=on
     modprobe i2c-dev
+
     local key="dtparam=i2c_arm"
     local value="on"
     local fn=$CONFIG
@@ -185,6 +200,8 @@ function EnableI2C{
         if line:match("^#?%s*"..key.."=.*$") then
         line=key.."="..value
     end
+
+    whiptail --msgbox "The ARM I2C interface is enabled" 20 60 1
 }
 
 

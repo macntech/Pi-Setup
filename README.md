@@ -5,6 +5,8 @@
 This simple bash script is to make the setup of a Raspberry Pi more comfortable. It's no alternative to the official **raspi-config** tool but could simplify and shorten specific setup. It was customized and created because I am using a lot of Raspberry Pis as a small server stack (like a Raspberry datacenter :computer: ) and initialize Pis regullary where different setup steps are necessary. This script just makes life easier :nerd_face: 
 
 ## Usage :dizzy:
+You need SSH access to your Raspberry first: Once you flashed your SD card with Raspberry OS, you should create an empty file named "SSH" on your SD card. 
+
 To use this script just download the script from **Github** and run as initial user **pi**
 
 ```

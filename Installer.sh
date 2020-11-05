@@ -33,7 +33,6 @@ INTERFACE_FILE="/etc/dhcpcd.conf"
 SSH_FILE="/etc/ssh/sshd_config"
 SOFTWARE="PI Setup"
 CURRENT_HOSTNAME=`cat /etc/hostname | tr -d " \t\n\r"`
-PI_CONFIG=/boot/config.txt
 BLACKLIST=/etc/modprobe.d/raspi-blacklist.conf
 #### END VARIABLES #####
 
@@ -173,19 +172,6 @@ function SetupI2C {
 	} | whiptail --gauge "Please wait..." 6 60 0
 }
 
-#Enable I2C Module from raspi-config
-function EnableI2C{
-    
-    if ! [ -e $BLACKLIST ]; then
-        touch $BLACKLIST
-    fi
-    sed $BLACKLIST -i -e "s/^\(blacklist[[:space:]]*i2c[-_]bcm2708\)/#\1/"
-    sed /etc/modules -i -e "s/^#[[:space:]]*\(i2c[-_]dev\)/\1/"
-    dtparam i2c_arm=on
-    modprobe i2c-dev
-    sudo sed 's/#dtparam=i2c_arm/dtparam=i2c_arm=on/' $PI_CONFIG
-}
-
 
 ##############  Start the main Setup Tool ################
 
@@ -231,7 +217,6 @@ case $CHOICE in
 	"2)")   
 	    whiptail --title "Setup Screen Output" --msgbox "The system will now setup I2C OLED Screen Output. If you already have the depending software installed, nothing will be installed and only the Screen script is copied. Please confirm." 8 78
         SetupI2C
-        #EnableI2C
         whiptail --title "Setup Screen Output" --msgbox "All files are setup and dependencies are installed. Please enable I2C with raspi-config command." 8 78
 	;;
 

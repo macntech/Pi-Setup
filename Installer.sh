@@ -33,6 +33,7 @@ INTERFACE_FILE="/etc/dhcpcd.conf"
 SSH_FILE="/etc/ssh/sshd_config"
 SOFTWARE="PI Setup"
 CURRENT_HOSTNAME=`cat /etc/hostname | tr -d " \t\n\r"`
+RC_LOCAL="/etc/rc.local"
 #### END VARIABLES #####
 
 # Function to setup the Hostname of the Raspberry
@@ -79,7 +80,7 @@ function WriteNetwork {
     #Write Network Settings in File
     echo "interface eth0" >> $INTERFACE_FILE
     echo -e "XXX\n25\nUpdating IP Config... \nXXX"
-    echo "static ip_Address=$IP" >> $INTERFACE_FILE
+    echo "static ip_address=$IP" >> $INTERFACE_FILE
     echo -e "XXX\n50\nUpdating Gateway Config... \nXXX"
     echo "static routers=$GATEWAY" >> $INTERFACE_FILE 
     echo -e "XXX\n75\nUpdating Domain Config... \nXXX"
@@ -173,6 +174,9 @@ function SetupI2C {
 	} | whiptail --gauge "Please wait..." 6 60 0
 }
 
+function copyStats{
+sudo sed -i '/exit 0/i sudo python3 \/home\/boot\/stats.py \&' /etc/rc.local
+}
 
 ##############  Start the main Setup Tool ################
 echo "::: LOG ::: Setup Started"
@@ -219,13 +223,14 @@ case $CHOICE in
 	"2)")   
 	    whiptail --title "Setup Screen Output" --msgbox "The system will now setup I2C OLED Screen Output. If you already have the depending software installed, nothing will be installed and only the Screen script is copied. Please confirm." 8 78
         SetupI2C
-        whiptail --title "Setup Screen Output" --msgbox "All files are setup and dependencies are installed. Please enable I2C with raspi-config command." 8 78
+        copyStats
+        whiptail --title "Setup Screen Output" --msgbox "All files are setup and dependencies are installed. Please enable I2C AND SPI with raspi-config command." 8 78
 	;;
 
 	"3)") 
         if (whiptail --title "Reboot" --yesno "After you finish the setup you should reboot your PI to enable all settings made (Please remember your fix IP if set during setup). You can find the Logfile under ${PWD} \n\nDo you want to reboot now?" 12 78); then
             echo "::: LOG ::: Setup completed. Reboot confirmed. Shutdown in 1 Minute. To cancel type shutdown -c"
-            shutdown -r 1
+            sudo shutdown -r 1
         else
             echo "::: LOG ::: Setup completed. Reboot cancelled. Please reboot manually."
             exit

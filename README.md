@@ -1,16 +1,16 @@
-## Raspberry Pi Setup Script
+# Pi Setup
 
 ![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg) ![Made with Bash](https://img.shields.io/badge/Made%20with-Bash-1f425f.svg) ![Made for Raspberry](https://img.shields.io/badge/-Raspberry%20Pi-C51A4A) 
 
-This simple bash script is to make the setup of a Raspberry Pi more comfortable. It's no alternative to the official **raspi-config** tool but could simplify and shorten specific setup. It was customized and created because I am using a lot of Raspberry Pis as a small server stack (like a Raspberry datacenter :computer: ) and initialize Pis regullary where different setup steps are necessary. This script just makes life easier :nerd_face: 
+Pi Setup is a simple bash script is to make the setup of a Raspberry Pi more comfortable. It's no alternative to the official **raspi-config** tool but could simplify and shorten specific initial setup. It was designed and created because I am using a lot of Raspberry Pis as a small server stack (like a Raspberry datacenter :computer: ) and initialize Pis regullary where different setup steps are necessary. This script just makes my (and maybe yours) life easier :nerd_face: 
 
 ## Usage :dizzy:
-You need SSH access to your Raspberry first: Once you flashed your SD card with Raspberry OS, you should create an empty file named "SSH" on your SD card. 
+You have two options to use this script. First you need SSH access to your Raspberry: Once you flashed your SD card with Raspberry OS, you should create an empty file named "SSH" on your SD card. 
 
-To use this script just download the script from **Github** and run as initial user **pi**
+To use this script just download the script from **Github** directly in your SSH session after you boot the raspberry OR download the script before and copy it to your SD card. Run as initial user **pi**
 
 ```
-wget https://github.com/jgeisslinger/Pi-Setup/archive/master.zip
+wget https://github.com/macntech/Pi-Setup/archive/master.zip
 unzip master.zip
 cd ./Pi-Setup-master
 sudo bash Installer.sh
@@ -46,7 +46,7 @@ Menu when entering the setup tool:
 ## Tasklist for future Features :spiral_notepad:
 I have some more tasks in mind that could be automated by the script in the future:
 - [ ] Setup new Pi password to supress SSH warning
-- [ ] Enable I2C and SPI interface directly (kind of difficult)
+- [ ] Enable I2C and SPI interface directly
 - [ ] Clear install files after setup completed
 - [ ] Better Error handling 
   

@@ -44,7 +44,7 @@ printf "\033[1;36m$DATUM
 \033[0;37mTemperature...: $TEMP °C
 \033[0;37mDisk..........: Total: $DISK1 | Used: $DISK2 | Free: $DISK3
 \033[0;37mMemory (MB)...: Total: $RAM1 MB | Used: $RAM2 MB | Free: $RAM3 MB | Swap: $RAM4 MB
-\033[0;37mIP Network....: LAN: \033[1;35m$IP_LAN\033[0;37m | WiFi: \033[1;35m$IP_WLAN
+\033[0;37mIP Network....: \033[1;35m$IP_LAN\033[0;37m
 \033[m
 
 "

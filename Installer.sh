@@ -9,13 +9,13 @@
 #                                    | |    
 #                                    |_|    
 #
-# This Script is Free to Use and will support you on setting up a Raspberry. 
+# This Script is for initial Pi configuration
 # It is developed on personal purpose. More information can be found in the Github repo.
-# https://github.com/jgeisslinger/Pi-Setup
+# https://github.com/macntech/Pi-Setup
 # 
 # Author: Johannes Geisslinger
-# Web: https://coding.observer
-#
+# Web: https://macandtech.com
+
 
 # Check install of whiptail before entering the tool
 clear
@@ -180,13 +180,13 @@ sudo sed -i '/exit 0/i sudo python3 \/home\/boot\/stats.py \&' /etc/rc.local
 
 ##############  Start the main Setup Tool ################
 echo "::: LOG ::: Setup Started"
-whiptail --title "PI Setup" --msgbox "This is a simple support tool to help setup Raspberry Pi.\n\nDetails can be found in the GitHub Repo.\n\nVisit me at https://coding.observer" 15 78 
+whiptail --title "PI Setup" --msgbox "This is a simple support tool to help setup Raspberry Pi.\n\nDetails can be found in the GitHub Repo.\n\nVisit me at https://macandtech.com" 15 78 
 
 while [ 1 ]
 do
 #Main Menu
 CHOICE=$(
-whiptail --title "Pi Setup - Simplify Setup your Raspberry" --menu "Make your choice" 16 100 9 \
+whiptail --title "Pi Setup" --menu "Make your choice" 16 100 9 \
 	"1)" "Start Initialization"  \
 	"2)" "Enable I2C Screen Output"  \
 	"3)" "End script"  3>&2 2>&1 1>&3	
